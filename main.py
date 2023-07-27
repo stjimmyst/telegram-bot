@@ -166,13 +166,10 @@ async def voice_processing(message):
 
             response = requests.post(OPENLANG_SERVER+'/SpeakingEstimation', files=files)
             res = json.loads(response.text)
-            if (res['is_enough']==True):
-                band = res['results']['estimations']['gra']['band']
-                comment = res['results']['estimations']['gra']['comment']
-                outp = printHTMLResult("Speaking", band, comment, True)
-                stat[id] = {"activity": "ready", "dt": dt}
-            else:
-                outp = printHTMLResult("Speaking", "N/A", res['results'],False)
+            band = res['results']['estimations']['gra']['band']
+            comment = res['results']['estimations']['gra']['comment']
+            outp = printHTMLResult("Speaking", band, comment, True)
+            stat[id] = {"activity": "ready", "dt": dt}
             os.remove(fn)
         else:
             outp = "Please provide text message when you want to estimate you IELTS Writing. Just type it and send to me."
@@ -189,27 +186,24 @@ async def echo_all(message):
         user_status = stat[id]
         dt = getTimeStamp()
         if user_status['activity'] == 'writing':
-            if (getMessageLength(message.text) < 50):
-                outp = printHTMLResult("Speaking", "N/A", "Your answer is too short for estimation. Please provide at least 50 words and try again.", False)
-            else:
-                await bot.send_message(chat_id, parse_mode="HTML",
-                                             text="Please wait for results...")
+            await bot.send_message(chat_id, parse_mode="HTML",
+                                   text="Please wait for results...")
 
-                params = {
-                    "answer": message.text,
-                    "question": "none",
-                    "user": str(getUserName(message)),
-                    "test": "ielts"
-                };
+            params = {
+                "answer": message.text,
+                "question": "none",
+                "user": str(getUserName(message)),
+                "test": "ielts"
+            };
 
-                response = requests.post(OPENLANG_SERVER + '/WritingEstimation',json=params)
-                print(response.text)
-                res = json.loads(response.text)
-                print(res)
-                band = res['results']['estimations']['lr']['band']
-                comment = res['results']['estimations']['lr']['comment']
-                outp = printHTMLResult("Writing",band,comment,True)
-                stat[id] = {"activity": "ready", "dt": dt}
+            response = requests.post(OPENLANG_SERVER + '/WritingEstimation', json=params)
+            print(response.text)
+            res = json.loads(response.text)
+            print(res)
+            band = res['results']['estimations']['lr']['band']
+            comment = res['results']['estimations']['lr']['comment']
+            outp = printHTMLResult("Writing", band, comment, True)
+            stat[id] = {"activity": "ready", "dt": dt}
         elif user_status['activity'] == 'speaking':
             outp = "Please provide voice message when you want to estimate you IELTS Speaking."
             stat[id] = {"activity": "ready", "dt": 0}
