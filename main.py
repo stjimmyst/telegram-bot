@@ -100,7 +100,7 @@ async def send_welcome(message):
     chat_id = message.chat.id
     if (len(user_status) != 0):
         stat[getuserid(message)]['activity'] = 'writing'
-        outp = "You are going to estimate you IELTS Writing. Please provide you IELTS Writing text below"
+        outp = "You are going to estimate you IELTS Writing. Please provide you IELTS Writing text below. Provide at least 50 words."
     else:
         outp = "Your session expired. Please use <b>/start</b> command again"
     await bot.send_message(chat_id, parse_mode="HTML", text=outp)
@@ -112,7 +112,7 @@ async def send_welcome(message):
     chat_id = message.chat.id
     if (len(user_status) != 0):
         stat[getuserid(message)]['activity'] = 'speaking'
-        outp = "You are going to estimate you IELTS Speaking. Please record your voice."
+        outp = "You are going to estimate you IELTS Speaking. Please record your voice. Provide at least 50 words."
     else:
         outp = "Your session expired. Please use <b>/start</b> command again"
     await bot.send_message(chat_id, parse_mode="HTML", text=outp)
