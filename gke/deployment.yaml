@@ -1,0 +1,61 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "openlang-deployment"
+  namespace: "default"
+  labels:
+    app: "openlang-server"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "openlang-server"
+  template:
+    metadata:
+      labels:
+        app: "openlang-server"
+    spec:
+      containers:
+      - name: "server-instance"
+        image: "us-central1-docker.pkg.dev/endless-matter-387302/openlang/server:latest"
+        volumeMounts:
+          - name: service-account-credentials-volume
+            mountPath: /etc/gcp
+            readOnly: true
+        ports:
+          - containerPort: 5000
+        env:
+          - name: OPENAI_API_KEY
+            value: mykey
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: pathtovolume
+      volumes:
+      - name: service-account-credentials-volume
+        secret:
+          secretName: my-data-service-account-credentials
+          items:
+          - key: sa_json
+            path: sa_credentials.json
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "openlang-server-hpa"
+  namespace: "default"
+  labels:
+    app: "openlang-server"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "openlang-server"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      target:
+        type: "Utilization"
+        averageUtilization: 80

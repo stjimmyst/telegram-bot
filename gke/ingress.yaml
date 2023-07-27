@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "my-app-ip"
+    networking.gke.io/managed-certificates: "mysert"
+spec:
+  rules:
+  - host: openlang.one
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: openlang-service
+            port:
+              number: 5000

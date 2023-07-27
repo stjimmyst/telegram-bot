@@ -1,0 +1,6 @@
+steps:
+  - id: Builder
+    name: gcr.io/cloud-builders/docker
+    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}', '.' ]
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}'
