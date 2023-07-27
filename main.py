@@ -57,6 +57,9 @@ def welcomeText(message):
     if (len(user_status) == 0):
         print("new user " + user_id)
         stat[user_id] = {"activity": "ready", "dt": 0}
+    elif (message.text == "/start") :
+        print("Existing user " + user_id)
+        stat[user_id]["activity"] = "ready"
     else:
         print("Existing user " + user_id)
         dt_old = user_status['dt']
